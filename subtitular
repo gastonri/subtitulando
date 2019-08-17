@@ -1,0 +1,35 @@
+import os, sys
+
+carpetaContenedora = sys.argv[1]
+formatoVideo = sys.argv[2]
+nomenclaturaTemporada = sys.argv[3]
+capituloVideo = sys.argv[4]
+capituloSubtitulo = sys.argv[5]
+
+videos = []
+subtitulos = []
+
+def separarArchivos(carpetaContenedora):    
+    for archivoVideo in os.listdir(carpetaContenedora):
+        if archivoVideo.find('.srt') is not -1:
+            subtitulos.append(archivoVideo)            
+        if archivoVideo.find(formatoVideo)  is not -1:
+            videos.append(archivoVideo)
+        
+def extraerCapitulo(nomenclaturaTemporada):
+    formato = nomenclaturaTemporada
+    for video in videos:        
+        inicioNomenclaturaTemporada = video.find(nomenclaturaTemporada) + 3
+        finNomenclaturaTemporada = inicioNomenclaturaTemporada + len(nomenclaturaTemporada)
+        nomenclaturaEpisodio = video[inicioNomenclaturaTemporada:finNomenclaturaTemporada]
+        cambiarNombre(video, nomenclaturaEpisodio)
+        
+def cambiarNombre(video, episodio):
+    episodio = episodio.replace(capituloVideo, capituloSubtitulo)
+    for subtitulo in subtitulos:
+        if subtitulo.find(episodio) is not -1:
+            video = video[:-4]
+            os.rename(carpetaContenedora + '\\' + subtitulo, carpetaContenedora + '\\' + video + '.srt')
+        
+separarArchivos(carpetaContenedora)
+extraerCapitulo(nomenclaturaTemporada)
